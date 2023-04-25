@@ -1,0 +1,57 @@
+<!-- EVENT LISTENER FOR SUCCESSFULL HUBSPOT FORM SUBMITS
+*   Add gtag event here or use this in Google tag Manager
+*
+*   Hubspot forms report several different events at various stages. I find two events to be meaningful:
+*   
+*   onFormSubmit – This is defined by Hubspot as “Called at the start of form submission, submission hasn’t been persisted yet”. What this means in practice is that the form has passed validation and the data has been passed back to Hubspot (without a response yet). Potentially, a form could fail at this point for various technical reasons, but that’s very uncommon.
+*   onFormSubmitted – This is defined by Hubspot as “Called after the form has been submitted and submission has been persisted”. What this means in practice is that a response for the form’s submission has been received and is positive (i.e. the form’s data was recorded).
+*   
+*   When choosing to use an event for the event listener that will trigger conversion pixels, we can choose from either event. onFormSubmit will be more permissive and will allow for forms that didn’t pass to also trigger a conversion event. On the other hand, onFormSubmitted is more conservative and waits for full validation that the form passed correctly.
+*   If you’re using a Thank You page redirect and also triggering multiple pixels, you might want to fire them before the server response returns so that they have time to trigger before the redirect takes place.
+*   If you’re using a simple thank you message, I recommend using the onFormSubmitted event.
+*
+*   We create a Custom HTML Tag that listens for a form success, trigger a dataLayer event which can then be used to trigger a marketing tag to push this data into Google Analytics.
+*   Name it something appropriate (SCRIPT - HubSpot Form Listener or similar) and add an "All Pages" trigger to the page with the script below as the tag HTML + sample optional human-friendly form names if website uses several forms: :
+*
+-->
+
+<script type="text/javascript">
+var id_lookupTable = {
+'988c94e6-d06b-4181-95d4-3ea925d01d47': 'request demo',
+'bc3f3208-e01e-4a9f-b1e9-161391c9279f': 'contact us'
+};
+  window.addEventListener("message", function(event) {
+    if(event.data.type === 'hsFormCallback' && event.data.eventName === 'onFormSubmitted') {
+
+      var hubspotFormName = event.data.data[0].value;
+      console.log("hubspotFormName = " + hubspotFormName);
+      console.log("event.data");
+      console.log(event.data);
+      console.log("event.data.data");
+      console.log(event.data.data);
+      console.log("event.data.data.0.value: " + event.data.data[0].value);
+
+      window.dataLayer.push({
+        'event': 'hubspot-form-success',
+        'hs-form-guid': id_lookupTable[event.data.id],
+        'hs-form-name': hubspotFormName,
+      });
+    }
+  });
+</script>
+
+<!-- This event listener can be used as a standalone script across all your pages (as above) OR injected into the Hubspot form’s JSON: -->
+
+<script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2.js"></script>
+<script>
+  hbspt.forms.create({
+	portalId: "12345678",
+	formId: "988c94e6-d06b-4181-95d4-3ea925d01d47",
+  onFormSubmit: function($form){
+  window.dataLayer.push({
+    'event': 'form submission',
+    'form_name': 'request demo'
+    });
+  }
+});
+</script>
