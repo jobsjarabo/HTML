@@ -1,0 +1,35 @@
+<style> 
+
+**Class of Element to be hidden if condition is not yet met here** {
+display: none;
+}
+  
+</style>
+
+<script> 
+
+document.getElementById("**ID of Radio Option 1 here**").addEventListener("change", function() {
+    var formElement1 = document.getElementsByClassName("**Class of Element to be shown if condition is met here**")[0];
+    var formElement2 = document.getElementsByClassName("**Class of Element to be hidden if condition is met here**")[0];
+        if (this.checked) {
+            formElement1.style.display = "block";
+            formElement2.style.display = "none";
+        } else {
+            formElement1.style.display = "none";
+            formElement2.style.display = "block";
+        }
+});
+
+document.getElementById("**ID of Radio Option 2 here**").addEventListener("change", function() {
+    var formElement2 = document.getElementsByClassName("**Class of Element to be shown if condition is met here**")[0];
+    var formElement1 = document.getElementsByClassName("**Class of Element to be hidden if condition is met here**")[0];
+        if (this.checked) {
+            formElement2.style.display = "block";
+            formElement1.style.display = "none";
+        } else {
+            formElement2.style.display = "none";
+            formElement1.style.display = "block";
+        }
+        });
+
+</script>
